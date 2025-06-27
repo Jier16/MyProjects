@@ -87,7 +87,7 @@ def scrape_mighty_earth():
 
 # Streamlit UI
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
-st.markdown("<h1 style='font-size: 36px;'>📅 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='font-size: 30px;'>📅 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
 st.markdown("<p style='font-size: 18px;'>Select the sources you want to search:</p>", unsafe_allow_html=True)
 
 # User selections
@@ -109,12 +109,12 @@ if st.button("Search"):
             with st.container():
                 st.markdown("""
                     <div style='background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
-                        <h3 style='font-size:22px;margin-bottom:10px;'>
+                        <h3 style='font-size:18px;margin-bottom:10px;'>
                             <a href='{link}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{title}</a>
                         </h3>
-                        <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {topic}</p>
-                        <p style='font-size:16px;margin:0;'><strong>Date:</strong> {date}</p>
-                        <p style='font-size:16px;margin:0;'><strong>Source:</strong> {source}</p>
+                        <p style='font-size:12px;margin:0;'><strong>Topic:</strong> {topic}</p>
+                        <p style='font-size:12px;margin:0;'><strong>Date:</strong> {date}</p>
+                        <p style='font-size:12px;margin:0;'><strong>Source:</strong> {source}</p>
                     </div>
                 """.format(
                     title=article['title'],
