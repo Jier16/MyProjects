@@ -41,7 +41,7 @@ def scrape_cspi():
                 if article_date >= two_weeks_ago:
                     articles_data.append({
                         "title": title_element.text.strip() if title_element else "Title not found",
-                        "topic": label_element.text.strip() if label_element else "Label not found",
+                        "topic": label_element.text.strip() if label_element else "Topic not found",
                         "date": date_element.text.strip(),
                         "date_obj": article_date,
                         "link": link_element['href'] if link_element else "Link not found",
