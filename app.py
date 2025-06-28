@@ -126,41 +126,41 @@ def scrape_cfs():
     return articles_data
 
 def scrape_ewg():
-    URL = "https://www.ewg.org/news-insights"
+    URL = "https://www.ewg.org/news-insights/news-release"
     headers = {'User-Agent': 'Mozilla/5.0'}
     page = requests.get(URL, headers=headers)
     articles_data = []
 
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
-        articles = soup.find_all('div', class_='field content-group')
+        articles = soup.find_all('div', class_='wrapper')
 
         for a in articles:
-            title_element = a.find("h3")
             date_element = a.find("time")
+            link_element = a.find("a", href=re.compile("/news-release/"))
+            img_element = a.find("img")
+            image_url = f"https://www.ewg.org{img_element['src']}" if img_element and img_element.get("src", "").startswith("/") else img_element['src'] if img_element else None
+            title_element = link_element.text.strip() if link_element else "Title not found"
 
+            # Topic handling (can be empty)
             all_links = a.find_all("a")
             topic_links = [link for link in all_links if "/areas-focus/" in link.get("href", "")]
             topics = [link.text.strip() for link in topic_links]
             topic_text = ", ".join(topics) if topics else "Topic not found"
 
-            link_element = next((link for link in all_links if "/news-release/" in link.get("href", "")), None)
-            img_element = a.find("a", class_ = "linked-image" )
-            image_url = "https://www.ewg.org/" + img_element['src'] if img_element else None
-
             if date_element:
                 try:
-                    article_date = datetime.strptime(date_element.text, "%B %d, %Y")
+                    article_date = datetime.strptime(date_element.text.strip(), "%B %d, %Y")
                 except:
                     continue
                 if article_date >= DATE_RANGE_START:
                     formatted_date = article_date.strftime("%b %d, %Y")
                     articles_data.append({
-                        "title": title_element.text.strip() if title_element else "Title not found",
+                        "title": title_element,
                         "topic": topic_text,
                         "date": formatted_date,
                         "date_obj": article_date,
-                        "link": "https://www.ewg.org" + link_element["href"] if link_element else "Link not found",
+                        "link": f"https://www.ewg.org{link_element['href']}" if link_element else "Link not found",
                         "source": "Environmental Working Group",
                         "image": image_url
                     })
