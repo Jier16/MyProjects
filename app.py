@@ -68,7 +68,7 @@ if st.session_state.view_mode == "main":
                 col1, col2 = st.columns([0.95, 0.05])
                 with col1:
                     st.markdown(f"""
-                        <div style='display:flex;gap:20px;align-items:center;background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);height:200px;'>
+                        <div style='display:flex;gap:20px;align-items:center;background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);height:220px;'>
                             <div style='flex:2;'>
                                 <h3 style='font-size:20px;margin:0;'>
                                     <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
@@ -105,7 +105,7 @@ elif st.session_state.view_mode == "saved":
         for article in st.session_state.saved_articles:
             with st.container():
                 st.markdown(f"""
-                    <div style='display:flex;gap:20px;align-items:center;background-color:#f0fff0;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);height:200px;'>
+                    <div style='display:flex;gap:20px;align-items:center;background-color:#f0fff0;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);height:220px;'>
                         <div style='flex:2;'>
                             <h3 style='font-size:20px;margin:0;'>
                                 <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
