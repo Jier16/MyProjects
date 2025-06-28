@@ -137,30 +137,32 @@ def scrape_ewg():
 
         for a in articles:
             date_element = a.find("time")
-            link_element = a.find("a", href=re.compile("/news-release/"))
-            img_element = a.find("img")
-            image_url = f"https://www.ewg.org{img_element['src']}" if img_element and img_element.get("src", "").startswith("/") else img_element['src'] if img_element else None
-            title_element = link_element.text.strip() if link_element else "Title not found"
 
-            # Topic handling (can be empty)
             all_links = a.find_all("a")
             topic_links = [link for link in all_links if "/areas-focus/" in link.get("href", "")]
             topics = [link.text.strip() for link in topic_links]
             topic_text = ", ".join(topics) if topics else "Topic not found"
 
+            for link in all_links:
+                if "/news-release/" in link.get("href", "")), None): link_element = link
+                title_element = link
+                
+            img_element = a.find("img", loading = "crazy" )
+            image_url = "https://www.ewg.org/" + img_element['src'] if img_element else None
+
             if date_element:
                 try:
-                    article_date = datetime.strptime(date_element.text.strip(), "%B %d, %Y")
+                    article_date = datetime.strptime(date_element.text, "%B %d, %Y")
                 except:
                     continue
                 if article_date >= DATE_RANGE_START:
                     formatted_date = article_date.strftime("%b %d, %Y")
                     articles_data.append({
-                        "title": title_element,
+                        "title": title_element.text.strip() if title_element else "Title not found",
                         "topic": topic_text,
                         "date": formatted_date,
                         "date_obj": article_date,
-                        "link": f"https://www.ewg.org{link_element['href']}" if link_element else "Link not found",
+                        "link": "https://www.ewg.org" + link_element["href"] if link_element else "Link not found",
                         "source": "Environmental Working Group",
                         "image": image_url
                     })
