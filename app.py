@@ -3,12 +3,15 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+import re
 
-# Initialize session state for saved articles and view mode
+# Initialize session state for saved articles, view mode, and search results
 if "saved_articles" not in st.session_state:
     st.session_state.saved_articles = []
 if "view_mode" not in st.session_state:
     st.session_state.view_mode = "main"
+if "all_articles" not in st.session_state:
+    st.session_state.all_articles = []
 
 # Helper functions for each website
 def scrape_cspi():
@@ -82,6 +85,42 @@ def scrape_mighty_earth():
                     })
     return articles_data
 
+def scrape_cfs():
+    URL = "https://www.centerforfoodsafety.org/press-releases"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    page = requests.get(URL, headers=headers)
+    articles_data = []
+
+    if page.status_code != 403:
+        soup = BeautifulSoup(page.content, "html.parser")
+        articles = soup.find_all('div', class_='no_a_color padB2')
+        two_weeks_ago = datetime.now() - timedelta(weeks=2)
+
+        for a in articles:
+            title_element = a.find(class_ = "padB1 txt_17 normal txt_red")
+            date_element = a.find(class_="txt_12 iblock padB0")
+            link_element = a.find("a")
+
+            if date_element:
+                try:
+                    clean_date = re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_element.text)
+                    article_date = datetime.strptime(clean_date, "%B %d, %Y")
+                except:
+                    continue
+                if article_date >= two_weeks_ago:
+                    formatted_date = article_date.strftime("%b %d, %Y")
+                    articles_data.append({
+                        "title": title_element.text.strip() if title_element else "Title not found",
+                        "topic": "Topic not found",
+                        "date": formatted_date,
+                        "date_obj": article_date,
+                        "link": "https://www.centerforfoodsafety.org" + link_element['href'] if link_element else "Link not found",
+                        "source": "Center for Food Safety"
+                    })
+    return articles_data
+
 # Streamlit UI
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 36px;'>📅 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
@@ -97,42 +136,44 @@ if st.session_state.view_mode == "main":
     st.markdown("<p style='font-size: 18px;'>Select the sources you want to search:</p>", unsafe_allow_html=True)
     show_cspi = st.checkbox("Center for Science in the Public Interest")
     show_mighty = st.checkbox("Mighty Earth")
+    show_cfs = st.checkbox("Center for Food Safety")
 
     if st.button("Search"):
-        all_articles = []
+        st.session_state.all_articles = []
         if show_cspi:
-            all_articles += scrape_cspi()
+            st.session_state.all_articles += scrape_cspi()
         if show_mighty:
-            all_articles += scrape_mighty_earth()
+            st.session_state.all_articles += scrape_mighty_earth()
+        if show_cfs:
+            st.session_state.all_articles += scrape_cfs()
+        st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
 
-        all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
-
-        if all_articles:
-            for idx, article in enumerate(all_articles):
-                is_saved = article in st.session_state.saved_articles
-                with st.container():
-                    col1, col2 = st.columns([0.95, 0.05])
-                    with col1:
-                        st.markdown(f"""
-                            <div style='background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
-                                <h3 style='font-size:22px;margin-bottom:10px;'>
-                                    <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
-                                </h3>
-                                <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {article['topic']}</p>
-                                <p style='font-size:16px;margin:0;'><strong>Date:</strong> {article['date']}</p>
-                                <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
-                            </div>
-                        """, unsafe_allow_html=True)
-                    with col2:
-                        key = f"star_{idx}"
-                        icon = "★" if is_saved else "☆"
-                        if st.button(icon, key=key):
-                            if is_saved:
-                                st.session_state.saved_articles.remove(article)
-                            else:
-                                st.session_state.saved_articles.append(article)
-        else:
-            st.info("No articles found in the past two weeks from the selected sources.")
+    if st.session_state.all_articles:
+        for idx, article in enumerate(st.session_state.all_articles):
+            is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
+            with st.container():
+                col1, col2 = st.columns([0.95, 0.05])
+                with col1:
+                    st.markdown(f"""
+                        <div style='background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
+                            <h3 style='font-size:22px;margin-bottom:10px;'>
+                                <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
+                            </h3>
+                            <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {article['topic']}</p>
+                            <p style='font-size:16px;margin:0;'><strong>Date:</strong> {article['date']}</p>
+                            <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                with col2:
+                    key = f"star_{idx}"
+                    icon = "★" if is_saved else "☆"
+                    if st.button(icon, key=key):
+                        if is_saved:
+                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
+                        else:
+                            st.session_state.saved_articles.append(article)
+    else:
+        st.info("Click 'Search' to load articles from the selected sources.")
 
 elif st.session_state.view_mode == "saved":
     st.markdown("<h2>📁 Saved Articles</h2>", unsafe_allow_html=True)
