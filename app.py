@@ -134,7 +134,7 @@ def generate_pdf(articles):
         pdf.multi_cell(0, 10, txt=f"Title: {art['title']}\nDate: {art['date']}\nTopic: {art['topic']}\nSource: {art['source']}\nLink: {art['link']}\n", border=1)
         pdf.ln(2)
     buffer = io.BytesIO()
-    pdf.output(buffer)
+    pdf.output(buffer, dest='F')  # Change here: use 'F' to write to a file-like object
     buffer.seek(0)
     return buffer
 
