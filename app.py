@@ -12,6 +12,8 @@ if "view_mode" not in st.session_state:
     st.session_state.view_mode = "main"
 if "all_articles" not in st.session_state:
     st.session_state.all_articles = []
+if st.button("🔄 Reset to Main View"):
+    st.session_state.view_mode = "main"
 
 # Helper functions for each website
 def scrape_cspi():
