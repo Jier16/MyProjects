@@ -126,7 +126,7 @@ def scrape_cfs():
     return articles_data
 
 def scrape_ewg():
-    URL = "https://www.ewg.org/news-insights"
+    URL = "https://www.ewg.org/news-insights/news-release"
     headers = {'User-Agent': 'Mozilla/5.0'}
     page = requests.get(URL, headers=headers)
     articles_data = []
@@ -146,7 +146,7 @@ def scrape_ewg():
 
             link_element = next((link for link in all_links if "/news-release/" in link.get("href", "")), None)
             img_element = a.find("img")
-            image_url = img_element['src'] if img_element else None
+            image_url = "https://www.ewg.org/" + img_element['src'] if img_element else None
 
             if date_element:
                 try:
