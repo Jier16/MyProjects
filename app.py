@@ -218,11 +218,7 @@ if st.session_state.view_mode == "main":
                             <div style='position:absolute; bottom:10px; right:15px;'>
                     """, unsafe_allow_html=True)
 
-                    if st.button("★" if is_saved else "☆", key=key):
-                        if is_saved:
-                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
-                        else:
-                            st.session_state.saved_articles.append(article)
+                    st.button("★" if is_saved else "☆", key=key, help="Click to save/unsave")
 
                     st.markdown("""</div></div>""", unsafe_allow_html=True)
     else:
@@ -258,3 +254,4 @@ elif st.session_state.view_mode == "saved":
                     """, unsafe_allow_html=True)
     else:
         st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
+
