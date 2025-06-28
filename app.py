@@ -20,9 +20,7 @@ if "all_articles" not in st.session_state:
 # === Scraper Functions ===
 def scrape_cspi():
     URL = "https://www.cspi.org/page/media"
-    headers = {
-        'User-Agent': 'Mozilla/5.0'
-    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
     page = requests.get(URL, headers=headers)
     articles_data = []
 
@@ -35,6 +33,8 @@ def scrape_cspi():
             date_element = a.find("time")
             link_element = a.find("a", class_="js-link-event-link")
             label_element = a.find("span", class_="source")
+            img_element = a.find("img")
+            image_url = img_element['src'] if img_element else None
 
             if date_element:
                 try:
@@ -48,15 +48,14 @@ def scrape_cspi():
                         "date": date_element.text.strip(),
                         "date_obj": article_date,
                         "link": link_element['href'] if link_element else "Link not found",
-                        "source": "Center for Science in the Public Interest"
+                        "source": "Center for Science in the Public Interest",
+                        "image": image_url
                     })
     return articles_data
 
 def scrape_mighty_earth():
     URL = "https://mightyearth.org/news/"
-    headers = {
-        'User-Agent': 'Mozilla/5.0'
-    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
     page = requests.get(URL, headers=headers)
     articles_data = []
 
@@ -69,6 +68,8 @@ def scrape_mighty_earth():
             topic_element = a.find("label")
             date_element = a.find("span", class_="date")
             link_element = a.find("a", class_="card-link")
+            img_element = a.find("img")
+            image_url = img_element['src'] if img_element else None
 
             if date_element:
                 try:
@@ -83,15 +84,14 @@ def scrape_mighty_earth():
                         "date": formatted_date,
                         "date_obj": article_date,
                         "link": link_element['href'] if link_element else "Link not found",
-                        "source": "Mighty Earth"
+                        "source": "Mighty Earth",
+                        "image": image_url
                     })
     return articles_data
 
 def scrape_cfs():
     URL = "https://www.centerforfoodsafety.org/press-releases"
-    headers = {
-        'User-Agent': 'Mozilla/5.0'
-    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
     page = requests.get(URL, headers=headers)
     articles_data = []
 
@@ -103,6 +103,8 @@ def scrape_cfs():
             title_element = a.find(class_="padB1 txt_17 normal txt_red")
             date_element = a.find(class_="txt_12 iblock padB0")
             link_element = a.find("a")
+            img_element = a.find("img")
+            image_url = img_element['src'] if img_element else None
 
             if date_element:
                 try:
@@ -118,15 +120,14 @@ def scrape_cfs():
                         "date": formatted_date,
                         "date_obj": article_date,
                         "link": "https://www.centerforfoodsafety.org" + link_element['href'] if link_element else "Link not found",
-                        "source": "Center for Food Safety"
+                        "source": "Center for Food Safety",
+                        "image": image_url
                     })
     return articles_data
 
 def scrape_ewg():
     URL = "https://www.ewg.org/news-insights"
-    headers = {
-        'User-Agent': 'Mozilla/5.0'
-    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
     page = requests.get(URL, headers=headers)
     articles_data = []
 
@@ -242,6 +243,7 @@ elif st.session_state.view_mode == "saved":
             with st.container():
                 st.markdown(f"""
                     <div style='background-color:#f0fff0;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
+                        {"<img src='" + article['image'] + "' style='width:100%;border-radius:10px;margin-bottom:10px;'/>" if article.get("image") else ""}
                         <h3 style='font-size:22px;margin-bottom:10px;'>
                             <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
                         </h3>
