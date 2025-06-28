@@ -104,7 +104,7 @@ def scrape_cfs():
             date_element = a.find(class_="txt_12 iblock padB0")
             link_element = a.find("a")
             img_element = a.find("img")
-            image_url = img_element['src'] if img_element else None
+            image_url = "https://www.centerforfoodsafety.org/" + img_element['src'] if img_element else None
 
             if date_element:
                 try:
