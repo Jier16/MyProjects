@@ -28,7 +28,6 @@ st.markdown("""
     🔎 Latest Articles from Selected Websites
 </h1>
 """, unsafe_allow_html=True)
-
 # Top-right folder icon
 with st.container():
     cols = st.columns([0.9, 0.1])
