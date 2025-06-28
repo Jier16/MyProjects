@@ -144,7 +144,7 @@ def scrape_ewg():
             topic_text = ", ".join(topics) if topics else "Topic not found"
 
             for link in all_links:
-                if "/news-release/" in link.get("href", "")), None): link_element = link
+                if "/news-release/" in link.get("href", ""): link_element = link
                 title_element = link
                 
             img_element = a.find("img", loading = "crazy" )
