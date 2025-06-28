@@ -4,7 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
-import base64
 
 # Initialize session state for saved articles, view mode, and search results
 if "saved_articles" not in st.session_state:
@@ -149,39 +148,30 @@ if st.session_state.view_mode == "main":
             st.session_state.all_articles += scrape_cfs()
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
 
-if st.session_state.all_articles:
-    for idx, article in enumerate(st.session_state.all_articles):
-        is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
-        with st.container():
-            col1, col2 = st.columns([0.95, 0.05])
-            with col1:
-                st.markdown(f"""
-                    <div style='background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
-                        <h3 style='font-size:22px;margin-bottom:10px;'>
-                            <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
-                        </h3>
-                        <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {article['topic']}</p>
-                        <p style='font-size:16px;margin:0;'><strong>Date:</strong> {article['date']}</p>
-                        <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
-                    </div>
-                """, unsafe_allow_html=True)
-            with col2:
-                icon_path = "star.png" if is_saved else "unstar.png"
-                with open(icon_path, "rb") as image_file:
-                    encoded = base64.b64encode(image_file.read()).decode()
-                icon_html = f"""
-                    <img src="data:image/png;base64,{encoded}" width="24" style="cursor: pointer;" onclick="document.getElementById('btn_{idx}').click();"/>
-                    <form action="" method="post">
-                        <input type="submit" id="btn_{idx}" style="display:none"/>
-                    </form>
-                """
-
-                st.markdown(icon_html, unsafe_allow_html=True)
-                if st.button("", key=f"btn_{idx}"):
-                    if is_saved:
-                        st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
-                    else:
-                        st.session_state.saved_articles.append(article)
+    if st.session_state.all_articles:
+        for idx, article in enumerate(st.session_state.all_articles):
+            is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
+            with st.container():
+                col1, col2 = st.columns([0.95, 0.05])
+                with col1:
+                    st.markdown(f"""
+                        <div style='background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
+                            <h3 style='font-size:22px;margin-bottom:10px;'>
+                                <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
+                            </h3>
+                            <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {article['topic']}</p>
+                            <p style='font-size:16px;margin:0;'><strong>Date:</strong> {article['date']}</p>
+                            <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                with col2:
+                    key = f"star_{idx}"
+                    icon = "★" if is_saved else "☆"
+                    if st.button(icon, key=key):
+                        if is_saved:
+                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
+                        else:
+                            st.session_state.saved_articles.append(article)
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
@@ -191,6 +181,10 @@ elif st.session_state.view_mode == "saved":
     with col1:
         if st.button("⬅️ Back to All Articles"):
             st.session_state.view_mode = "main"
+    with col2:
+        # Removed PDF print and download buttons here
+
+        pass
 
     if st.session_state.saved_articles:
         for article in st.session_state.saved_articles:
