@@ -144,6 +144,8 @@ def scrape_ewg():
             topic_text = ", ".join(topics) if topics else "Topic not found"
 
             link_element = next((link for link in all_links if "/news-release/" in link.get("href", "")), None)
+            img_element = a.find("img")
+            image_url = img_element['src'] if img_element else None
 
             if date_element:
                 try:
@@ -159,6 +161,7 @@ def scrape_ewg():
                         "date_obj": article_date,
                         "link": "https://www.ewg.org" + link_element["href"] if link_element else "Link not found",
                         "source": "Environmental Working Group"
+                        "image": image_url
                     })
     return articles_data
 
@@ -206,6 +209,7 @@ if st.session_state.view_mode == "main":
                 with col1:
                     st.markdown(f"""
                         <div style='background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
+                            {"<img src='" + article['image'] + "' style='width:100%;border-radius:10px;margin-bottom:10px;'/>" if article.get("image") else ""}
                             <h3 style='font-size:22px;margin-bottom:10px;'>
                                 <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
                             </h3>
