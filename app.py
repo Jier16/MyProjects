@@ -137,11 +137,13 @@ def scrape_ewg():
         for a in articles:
             title_element = a.find("h3")
             date_element = a.find("time")
-            link_element = a.find("a")
+            
             all_links = a.find_all("a")
             topic_links = [link for link in all_links if "/areas-focus/" in link.get("href", "")]
             topics = [link.text.strip() for link in topic_links]
             topic_text = ", ".join(topics) if topics else "Topic not found"
+            for link in all_links:
+                if "/news-release/" in link.get("href", ""): link_element = link
 
             if date_element:
                 try:
@@ -155,7 +157,7 @@ def scrape_ewg():
                         "topic": topic_text,
                         "date": formatted_date,
                         "date_obj": article_date,
-                        "link": "https://www.ewg.org" + link_element['href'] if link_element else "Link not found",
+                        "link": "https://www.ewg.org/news-insights" + link_element["href"] if link_element else "Link not found",
                         "source": "Environmental Working Group"
                     })
     return articles_data
