@@ -178,6 +178,7 @@ if st.session_state.view_mode == "main":
     show_cspi = st.checkbox("Center for Science in the Public Interest")
     show_mighty = st.checkbox("Mighty Earth")
     show_cfs = st.checkbox("Center for Food Safety")
+    show_ewg = st.checkbox("Environmental Working Group")
 
     if st.button("Search"):
         st.session_state.all_articles = []
@@ -187,6 +188,8 @@ if st.session_state.view_mode == "main":
             st.session_state.all_articles += scrape_mighty_earth()
         if show_cfs:
             st.session_state.all_articles += scrape_cfs()
+        if show_ewg:
+            st.session_state.all_articles += scrape_ewg()
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
 
     if st.session_state.all_articles:
