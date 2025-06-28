@@ -237,20 +237,20 @@ elif st.session_state.view_mode == "saved":
     with col1:
         if st.button("⬅️ Back to All Articles"):
             st.session_state.view_mode = "main"
-
-    if st.session_state.saved_articles:
-        for article in st.session_state.saved_articles:
-            with st.container():
-                st.markdown(f"""
-                    <div style='background-color:#f0fff0;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
-                        {"<img src='" + article['image'] + "' style='width:100%;border-radius:10px;margin-bottom:10px;'/>" if article.get("image") else ""}
-                        <h3 style='font-size:22px;margin-bottom:10px;'>
-                            <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
+            st.markdown(f"""
+                <div style='display: flex; background-color: #f0fff0; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);'>
+                    <div style='flex: 2; padding-right: 20px;'>
+                        <h3 style='font-size: 22px; margin-bottom: 10px;'>
+                            <a href='{article['link']}' target='_blank' style='text-decoration: none; color: #1a73e8;'>{article['title']}</a>
                         </h3>
-                        <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {article['topic']}</p>
-                        <p style='font-size:16px;margin:0;'><strong>Date:</strong> {article['date']}</p>
-                        <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
+                        <p style='font-size: 16px; margin: 0;'><strong>Topic:</strong> {article['topic']}</p>
+                        <p style='font-size: 16px; margin: 0;'><strong>Date:</strong> {article['date']}</p>
+                        <p style='font-size: 16px; margin: 0;'><strong>Source:</strong> {article['source']}</p>
                     </div>
-                """, unsafe_allow_html=True)
+                    <div style='flex: 1; display: flex; align-items: center; justify-content: center;'>
+                        {"<img src='" + article['image'] + "' style='max-width: 100%; height: auto; border-radius: 10px;'/>" if article.get("image") else ""}
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
     else:
         st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
