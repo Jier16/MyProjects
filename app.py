@@ -166,8 +166,6 @@ def scrape_ewg():
     return articles_data
 
 # === UI ===
-import streamlit as st
-
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 36px;'>🌍 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
 
@@ -216,9 +214,9 @@ if st.session_state.view_mode == "main":
                                 <p style='font-size:14px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
                                 <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
                                 <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
-                                <div style='position:absolute; bottom:10px; right:15px;'>
-                                    <button type='button' style='background:none; border:none; font-size:18px; cursor:pointer;'>{'★' if is_saved else '☆'}</button>
-                                </div>
+                            </div>
+                            <div style='position:absolute; bottom:10px; right:15px;'>
+                                {"★" if is_saved else "☆"}
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
@@ -253,12 +251,13 @@ elif st.session_state.view_mode == "saved":
                                 <p style='font-size:14px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
                                 <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
                                 <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
-                                <div style='position:absolute; bottom:10px; right:15px;'>
-                                    <span style='font-size:18px;'>★</span>
-                                </div>
+                            </div>
+                            <div style='position:absolute; bottom:10px; right:15px;'>
+                                ★
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
     else:
         st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
+
 
