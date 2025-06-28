@@ -166,7 +166,7 @@ if st.session_state.view_mode == "main":
                     """, unsafe_allow_html=True)
                 with col2:
                     key = f"star_{idx}"
-                    icon = "★" if is_saved else "☆"
+                    icon = st.image("star.png", width=10) if is_saved else st.image("unstar.png", width=10)
                     if st.button(icon, key=key):
                         if is_saved:
                             st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
