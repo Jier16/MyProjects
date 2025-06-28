@@ -85,6 +85,42 @@ def scrape_mighty_earth():
                     })
     return articles_data
 
+def scrape_cfs():
+    URL = "https://www.centerforfoodsafety.org/press-releases"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    page = requests.get(URL, headers=headers)
+    articles_data = []
+
+    if page.status_code != 403:
+        soup = BeautifulSoup(page.content, "html.parser")
+        articles = soup.find_all('div', class_='no_a_color padB2')
+        two_weeks_ago = datetime.now() - timedelta(weeks=2)
+
+        for a in articles:
+            title_element = a.find(class_ = "padB1 txt_17 normal txt_red")
+            date_element = a.find(class_="txt_12 iblock padB0")
+            link_element = a.find("a")
+
+            if date_element:
+                try:
+                    clean_date = re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_element.text)
+                    article_date = datetime.strptime(clean_date, "%B %d, %Y")
+                except:
+                    continue
+                if article_date >= two_weeks_ago:
+                    formatted_date = article_date.strftime("%b %d, %Y")
+                    articles_data.append({
+                        "title": title_element.text.strip() if title_element else "Title not found",
+                        "topic": "Topic not found",
+                        "date": formatted_date,
+                        "date_obj": article_date,
+                        "link": link_element['href'] if link_element else "Link not found",
+                        "source": "Center for Food Safety"
+                    })
+    return articles_data
+
 # Streamlit UI
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 30px;'>📅 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
@@ -93,6 +129,7 @@ st.markdown("<p style='font-size: 18px;'>Select the sources you want to search:<
 # User selections
 show_cspi = st.checkbox("Center for Science in the Public Interest")
 show_mighty = st.checkbox("Mighty Earth")
+show_cfs = st.checkbox("Center for Food Safety")
 
 if st.button("Search"):
     all_articles = []
@@ -100,6 +137,8 @@ if st.button("Search"):
         all_articles += scrape_cspi()
     if show_mighty:
         all_articles += scrape_mighty_earth()
+    if show_cfs:
+        all_articles += scrape_cfs()
 
     # Sort articles by date (most recent first)
     all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
