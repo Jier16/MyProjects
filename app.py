@@ -4,8 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
-import io
-from fpdf import FPDF
 
 # Initialize session state for saved articles, view mode, and search results
 if "saved_articles" not in st.session_state:
@@ -123,21 +121,6 @@ def scrape_cfs():
                     })
     return articles_data
 
-def generate_pdf(articles):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Saved Articles Report", ln=True, align='C')
-    pdf.cell(200, 10, txt=f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align='C')
-    pdf.ln(10)
-    for art in articles:
-        pdf.multi_cell(0, 10, txt=f"Title: {art['title']}\nDate: {art['date']}\nTopic: {art['topic']}\nSource: {art['source']}\nLink: {art['link']}\n", border=1)
-        pdf.ln(2)
-    buffer = io.BytesIO()
-    pdf.output(buffer)  # no dest='F' here
-    buffer.seek(0)
-    return buffer
-
 # Streamlit UI
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 36px;'>📅 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
@@ -199,10 +182,9 @@ elif st.session_state.view_mode == "saved":
         if st.button("⬅️ Back to All Articles"):
             st.session_state.view_mode = "main"
     with col2:
-        if st.session_state.saved_articles:
-            if st.button("🖨️ Print as Report"):
-                pdf_file = generate_pdf(st.session_state.saved_articles)
-                st.download_button(label="📄 Download PDF", data=pdf_file, file_name="saved_articles_report.pdf")
+        # Removed PDF print and download buttons here
+
+        pass
 
     if st.session_state.saved_articles:
         for article in st.session_state.saved_articles:
