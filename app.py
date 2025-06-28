@@ -126,7 +126,7 @@ def scrape_cfs():
     return articles_data
 
 def scrape_ewg():
-    URL = "https://www.ewg.org/news-insights/news-release"
+    URL = "https://www.ewg.org/news-insights"
     headers = {'User-Agent': 'Mozilla/5.0'}
     page = requests.get(URL, headers=headers)
     articles_data = []
