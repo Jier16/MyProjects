@@ -70,7 +70,7 @@ if st.session_state.view_mode == "main":
                     st.markdown(f"""
                         <div style='display:flex;gap:20px;align-items:center;background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);height:220px;'>
                             <div style='flex:2;'>
-                                <h3 style='font-size:20px;margin:0;font-family: Arial, sans-serif;'>
+                                <h3 style='font-size:20px;margin:0; font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;'>
                                     <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
                                 </h3>
                                 <p style='font-size:14px;margin:5px 0 0;'><strong>Topic:</strong> {article['topic']}</p>
