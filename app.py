@@ -168,7 +168,7 @@ st.markdown("<h1 style='font-size: 36px;'>📅 Latest Articles from Selected Web
 
 # Top-right folder icon
 with st.container():
-    cols = st.columns([0.9, 0])
+    cols = st.columns([0.9, 0.1])
     with cols[1]:
         if st.button("📁 Saved ({})".format(len(st.session_state.saved_articles))):
             st.session_state.view_mode = "saved"
