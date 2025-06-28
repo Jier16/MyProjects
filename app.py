@@ -170,13 +170,12 @@ if st.session_state.all_articles:
                 with open(icon_path, "rb") as image_file:
                     encoded = base64.b64encode(image_file.read()).decode()
                 icon_html = f"""
-                    <button style="border:none; background: none; padding: 0;" onclick="document.getElementById('btn_{idx}').click();">
-                        <img src="data:image/png;base64,{encoded}" width="24"/>
-                    </button>
+                    <img src="data:image/png;base64,{encoded}" width="24" style="cursor: pointer;" onclick="document.getElementById('btn_{idx}').click();"/>
                     <form action="" method="post">
                         <input type="submit" id="btn_{idx}" style="display:none"/>
                     </form>
                 """
+
                 st.markdown(icon_html, unsafe_allow_html=True)
                 if st.button("", key=f"btn_{idx}"):
                     if is_saved:
