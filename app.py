@@ -179,8 +179,8 @@ if st.session_state.view_mode == "main":
         f"<p style='font-size:16px;'>Showing articles published between <strong>{DATE_RANGE_START.strftime('%b %d, %Y')}</strong> and <strong>{DATE_RANGE_END.strftime('%b %d, %Y')}</strong>.</p>",
         unsafe_allow_html=True
     )
-    st.markdown("### 🌐 Website Selection")
-    select_all = st.checkbox("Select All Websites")
+    st.markdown("### Website Selection")
+    select_all = st.checkbox("⭐️ Select All Websites")
     show_cspi = st.checkbox("1⃣️ Center for Science in the Public Interest", value=select_all)
     show_mighty = st.checkbox("2⃣️ Mighty Earth", value=select_all)
     show_cfs = st.checkbox("3⃣️ Center for Food Safety", value=select_all)
