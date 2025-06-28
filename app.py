@@ -181,10 +181,10 @@ if st.session_state.view_mode == "main":
     )
     st.markdown("### 🌐 Website Selection")
     select_all = st.checkbox("Select All Websites")
-    show_cspi = st.checkbox("Center for Science in the Public Interest", value=select_all)
-    show_mighty = st.checkbox("Mighty Earth", value=select_all)
-    show_cfs = st.checkbox("Center for Food Safety", value=select_all)
-    show_ewg = st.checkbox("Environmental Working Group", value=select_all)
+    show_cspi = st.checkbox("1⃣️ Center for Science in the Public Interest", value=select_all)
+    show_mighty = st.checkbox("2⃣️ Mighty Earth", value=select_all)
+    show_cfs = st.checkbox("3⃣️ Center for Food Safety", value=select_all)
+    show_ewg = st.checkbox("4⃣️ Environmental Working Group", value=select_all)
 
     if st.button("Search"):
         st.session_state.all_articles = []
