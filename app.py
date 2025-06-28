@@ -117,7 +117,7 @@ def scrape_cfs():
                         "topic": "Topic not found",
                         "date": formatted_date,
                         "date_obj": article_date,
-                        "link": "https://www.centerforfoodsafety.org/press-releases" + link_element['href'] if link_element else "Link not found",
+                        "link": "https://www.centerforfoodsafety.org" + link_element['href'] if link_element else "Link not found",
                         "source": "Center for Food Safety"
                     })
     return articles_data
