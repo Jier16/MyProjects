@@ -177,14 +177,10 @@ if st.session_state.view_mode == "main":
 
 elif st.session_state.view_mode == "saved":
     st.markdown("<h2>📁 Saved Articles</h2>", unsafe_allow_html=True)
-    col1, col2 = st.columns([0.7, 0.3])
+    col1 = st.columns(0.7)
     with col1:
         if st.button("⬅️ Back to All Articles"):
             st.session_state.view_mode = "main"
-    with col2:
-        # Removed PDF print and download buttons here
-
-        pass
 
     if st.session_state.saved_articles:
         for article in st.session_state.saved_articles:
