@@ -70,12 +70,12 @@ if st.session_state.view_mode == "main":
                     st.markdown(f"""
                         <div style='display:flex;gap:20px;align-items:center;background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);height:220px;'>
                             <div style='flex:2;'>
-                                <h3 style='font-size:20px;margin:0;'>
+                                <h3 style='font-size:24px;margin:0;'>
                                     <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
                                 </h3>
-                                <p style='font-size:14px;margin:5px 0 0;'><strong>Topic:</strong> {article['topic']}</p>
-                                <p style='font-size:14px;margin:5px 0 0;'><strong>Date:</strong> {article['date']}</p>
-                                <p style='font-size:14px;margin:5px 0 0;'><strong>Source:</strong> {article['source']}</p>
+                                <p style='font-size:16px;margin:5px 0 0;'><strong>Topic:</strong> {article['topic']}</p>
+                                <p style='font-size:16px;margin:5px 0 0;'><strong>Date:</strong> {article['date']}</p>
+                                <p style='font-size:16px;margin:5px 0 0;'><strong>Source:</strong> {article['source']}</p>
                             </div>
                             <div style='flex:1;text-align:right;'>
                                 {"<img src='" + article['image'] + "' style='max-height:180px; max-width:100%; border-radius:10px;'/>" if article.get("image") else ""}
@@ -107,12 +107,12 @@ elif st.session_state.view_mode == "saved":
                 st.markdown(f"""
                     <div style='display:flex;gap:20px;align-items:center;background-color:#f0fff0;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);height:220px;'>
                         <div style='flex:2;'>
-                            <h3 style='font-size:20px;margin:0;'>
+                            <h3 style='font-size:24px;margin:0;'>
                                 <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
                             </h3>
-                            <p style='font-size:14px;margin:5px 0 0;'><strong>Topic:</strong> {article['topic']}</p>
-                            <p style='font-size:14px;margin:5px 0 0;'><strong>Date:</strong> {article['date']}</p>
-                            <p style='font-size:14px;margin:5px 0 0;'><strong>Source:</strong> {article['source']}</p>
+                            <p style='font-size:16px;margin:5px 0 0;'><strong>Topic:</strong> {article['topic']}</p>
+                            <p style='font-size:16px;margin:5px 0 0;'><strong>Date:</strong> {article['date']}</p>
+                            <p style='font-size:16px;margin:5px 0 0;'><strong>Source:</strong> {article['source']}</p>
                         </div>
                         <div style='flex:1;text-align:right;'>
                             {"<img src='" + article['image'] + "' style='max-height:180px; max-width:100%; border-radius:10px;'/>" if article.get("image") else ""}
