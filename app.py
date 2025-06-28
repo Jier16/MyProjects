@@ -5,7 +5,11 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
 
-# Initialize session state for saved articles, view mode, and search results
+# === Define global date range ===
+DATE_RANGE_END = datetime.now()
+DATE_RANGE_START = DATE_RANGE_END - timedelta(weeks=2)
+
+# Initialize session state
 if "saved_articles" not in st.session_state:
     st.session_state.saved_articles = []
 if "view_mode" not in st.session_state:
@@ -13,11 +17,11 @@ if "view_mode" not in st.session_state:
 if "all_articles" not in st.session_state:
     st.session_state.all_articles = []
 
-# Helper functions for each website
+# === Scraper Functions ===
 def scrape_cspi():
     URL = "https://www.cspi.org/page/media"
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0'
     }
     page = requests.get(URL, headers=headers)
     articles_data = []
@@ -25,20 +29,19 @@ def scrape_cspi():
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
         articles = soup.find_all('div', class_='teaser-inner')
-        two_weeks_ago = datetime.now() - timedelta(weeks=2)
 
         for a in articles:
             title_element = a.find("a")
             date_element = a.find("time")
             link_element = a.find("a", class_="js-link-event-link")
-            label_element = a.find("span", class_ = "source")
+            label_element = a.find("span", class_="source")
 
             if date_element:
                 try:
                     article_date = datetime.strptime(date_element.text.strip(), "%B %d, %Y")
                 except:
                     continue
-                if article_date >= two_weeks_ago:
+                if article_date >= DATE_RANGE_START:
                     articles_data.append({
                         "title": title_element.text.strip() if title_element else "Title not found",
                         "topic": label_element.text.strip() if label_element else "Label not found",
@@ -52,7 +55,7 @@ def scrape_cspi():
 def scrape_mighty_earth():
     URL = "https://mightyearth.org/news/"
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0'
     }
     page = requests.get(URL, headers=headers)
     articles_data = []
@@ -60,7 +63,6 @@ def scrape_mighty_earth():
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
         articles = soup.find_all('div', class_='card card-article uk-transition-toggle reveal')
-        two_weeks_ago = datetime.now() - timedelta(weeks=2)
 
         for a in articles:
             title_element = a.find("h5")
@@ -73,7 +75,7 @@ def scrape_mighty_earth():
                     article_date = datetime.strptime(date_element.text.strip(), "%d/%b/%Y")
                 except:
                     continue
-                if article_date >= two_weeks_ago:
+                if article_date >= DATE_RANGE_START:
                     formatted_date = article_date.strftime("%b %d, %Y")
                     articles_data.append({
                         "title": title_element.text.strip() if title_element else "Title not found",
@@ -88,7 +90,7 @@ def scrape_mighty_earth():
 def scrape_cfs():
     URL = "https://www.centerforfoodsafety.org/press-releases"
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0'
     }
     page = requests.get(URL, headers=headers)
     articles_data = []
@@ -96,10 +98,9 @@ def scrape_cfs():
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
         articles = soup.find_all('div', class_='no_a_color padB2')
-        two_weeks_ago = datetime.now() - timedelta(weeks=2)
 
         for a in articles:
-            title_element = a.find(class_ = "padB1 txt_17 normal txt_red")
+            title_element = a.find(class_="padB1 txt_17 normal txt_red")
             date_element = a.find(class_="txt_12 iblock padB0")
             link_element = a.find("a")
 
@@ -109,7 +110,7 @@ def scrape_cfs():
                     article_date = datetime.strptime(clean_date, "%B %d, %Y")
                 except:
                     continue
-                if article_date >= two_weeks_ago:
+                if article_date >= DATE_RANGE_START:
                     formatted_date = article_date.strftime("%b %d, %Y")
                     articles_data.append({
                         "title": title_element.text.strip() if title_element else "Title not found",
@@ -124,7 +125,7 @@ def scrape_cfs():
 def scrape_ewg():
     URL = "https://www.ewg.org/news-insights"
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0'
     }
     page = requests.get(URL, headers=headers)
     articles_data = []
@@ -132,25 +133,24 @@ def scrape_ewg():
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
         articles = soup.find_all('div', class_='field content-group')
-        two_weeks_ago = datetime.now() - timedelta(weeks=2)
 
         for a in articles:
             title_element = a.find("h3")
             date_element = a.find("time")
-            
+
             all_links = a.find_all("a")
             topic_links = [link for link in all_links if "/areas-focus/" in link.get("href", "")]
             topics = [link.text.strip() for link in topic_links]
             topic_text = ", ".join(topics) if topics else "Topic not found"
-            for link in all_links:
-                if "/news-release/" in link.get("href", ""): link_element = link
+
+            link_element = next((link for link in all_links if "/news-release/" in link.get("href", "")), None)
 
             if date_element:
                 try:
                     article_date = datetime.strptime(date_element.text, "%B %d, %Y")
                 except:
                     continue
-                if article_date >= two_weeks_ago:
+                if article_date >= DATE_RANGE_START:
                     formatted_date = article_date.strftime("%b %d, %Y")
                     articles_data.append({
                         "title": title_element.text.strip() if title_element else "Title not found",
@@ -162,23 +162,31 @@ def scrape_ewg():
                     })
     return articles_data
 
-# Streamlit UI
+# === UI ===
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 36px;'>📅 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
 
-# Top-right folder icon with badge
+# Top-right folder icon
 with st.container():
     cols = st.columns([0.9, 0.1])
     with cols[1]:
         if st.button("📁 Saved ({})".format(len(st.session_state.saved_articles))):
             st.session_state.view_mode = "saved"
 
+# Main view
 if st.session_state.view_mode == "main":
-    st.markdown("<p style='font-size: 18px;'>Select the sources you want to search:</p>", unsafe_allow_html=True)
-    show_cspi = st.checkbox("Center for Science in the Public Interest")
-    show_mighty = st.checkbox("Mighty Earth")
-    show_cfs = st.checkbox("Center for Food Safety")
-    show_ewg = st.checkbox("Environmental Working Group")
+    st.markdown(
+        f"<p style='font-size:16px;'>Showing articles published between <strong>{DATE_RANGE_START.strftime('%b %d, %Y')}</strong> and <strong>{DATE_RANGE_END.strftime('%b %d, %Y')}</strong>.</p>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### 🌐 Website Selection")
+    select_all = st.checkbox("Select All Websites")
+
+    show_cspi = st.checkbox("Center for Science in the Public Interest", value=select_all)
+    show_mighty = st.checkbox("Mighty Earth", value=select_all)
+    show_cfs = st.checkbox("Center for Food Safety", value=select_all)
+    show_ewg = st.checkbox("Environmental Working Group", value=select_all)
 
     if st.button("Search"):
         st.session_state.all_articles = []
@@ -219,6 +227,7 @@ if st.session_state.view_mode == "main":
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
+# Saved view
 elif st.session_state.view_mode == "saved":
     st.markdown("<h2>📁 Saved Articles</h2>", unsafe_allow_html=True)
     col1, col2 = st.columns([0.7, 0.3])
