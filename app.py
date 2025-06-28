@@ -173,7 +173,7 @@ if st.button("🔎 Search Now"):
 # === Main Card Renderer ===
 def render_article(article, idx):
     is_saved = any(saved["link"] == article["link"] for saved in st.session_state.saved_articles)
-    card_width = 500
+    card_width = 900
     card_height = int(card_width / 1.618)
     image_width = int(card_width * 0.382)
 
