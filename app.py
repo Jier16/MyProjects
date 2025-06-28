@@ -12,6 +12,7 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+import re
 
 # Helper functions for each website
 def scrape_cspi():
