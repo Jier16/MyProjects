@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import re
+import base64
 
 # Initialize session state for saved articles, view mode, and search results
 if "saved_articles" not in st.session_state:
@@ -166,10 +167,18 @@ if st.session_state.all_articles:
                 """, unsafe_allow_html=True)
             with col2:
                 icon_path = "star.png" if is_saved else "unstar.png"
-                st.image(icon_path, width=24)
-                key = f"toggle_save_{idx}"
-                button_label = "Unsave" if is_saved else "Save"
-                if st.button(button_label, key=key):
+                with open(icon_path, "rb") as image_file:
+                    encoded = base64.b64encode(image_file.read()).decode()
+                icon_html = f"""
+                    <button style="border:none; background: none; padding: 0;" onclick="document.getElementById('btn_{idx}').click();">
+                        <img src="data:image/png;base64,{encoded}" width="24"/>
+                    </button>
+                    <form action="" method="post">
+                        <input type="submit" id="btn_{idx}" style="display:none"/>
+                    </form>
+                """
+                st.markdown(icon_html, unsafe_allow_html=True)
+                if st.button("", key=f"btn_{idx}"):
                     if is_saved:
                         st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
                     else:
