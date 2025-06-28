@@ -144,10 +144,11 @@ def scrape_ewg():
             topic_text = ", ".join(topics) if topics else "Topic not found"
 
             for link in all_links:
-                if "/news-release/" in link.get("href", ""): link_element = link
-                title_element = link
+                if ("/news-release/" in link.get("href", "")): 
+                    link_element = link
+                    title_element = link
                 
-            img_element = a.find("img", loading = "crazy" )
+            img_element = a.find("img", loading = "crazy")
             image_url = "https://www.ewg.org/" + img_element['src'] if img_element else None
 
             if date_element:
