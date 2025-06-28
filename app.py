@@ -206,23 +206,30 @@ if st.session_state.view_mode == "main":
                 is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
                 key = f"star_{i+idx}"
                 with row[idx]:
-                    if st.button("★" if is_saved else "☆", key=key):
+                    st.markdown(f"""
+                        <div style='background-color:#f9f9f9;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow:hidden; height:400px; position:relative;'>
+                            <img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>
+                            <div style='padding: 15px;'>
+                                <h4 style='font-size:18px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
+                            </div>
+                            <div style='position:absolute; bottom:10px; right:15px;'>
+                                <form action='' method='post'>
+                                    <button name='save_button_{key}' type='submit' style='border:none;background:none;font-size:18px;'>
+                                        {'★' if is_saved else '☆'}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+
+                    if f"save_button_{key}" in st.session_state:
                         if is_saved:
                             st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
                         else:
                             st.session_state.saved_articles.append(article)
-
-                    st.markdown(f"""
-                        <div style='background-color:#f9f9f9;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow:hidden; height:500px;'>
-                            <img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>
-                            <div style='padding: 15px;'>
-                                <h4 style='font-size:22px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
@@ -241,13 +248,16 @@ elif st.session_state.view_mode == "saved":
             for idx, article in enumerate(row_articles):
                 with row[idx]:
                     st.markdown(f"""
-                        <div style='background-color:#f0fff0;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow: hidden; height:500px;'>
+                        <div style='background-color:#f0fff0;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow: hidden; height:400px; position:relative;'>
                             <img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>
                             <div style='padding: 15px;'>
-                                <h4 style='font-size:22px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
+                                <h4 style='font-size:18px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
+                            </div>
+                            <div style='position:absolute; bottom:10px; right:15px;'>
+                                <span style='font-size:18px;'>★</span>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
