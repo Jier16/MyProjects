@@ -33,9 +33,9 @@ with source_box:
     col1, col2 = st.columns(2)
     with col1:
         select_all = st.checkbox("✅ Select All")
+    with col2:
         show_cspi = st.checkbox("Center for Science in the Public Interest", value=select_all)
         show_mighty = st.checkbox("Mighty Earth", value=select_all)
-    with col2:
         show_cfs = st.checkbox("Center for Food Safety", value=select_all)
         show_ewg = st.checkbox("Environmental Working Group", value=select_all)
 
@@ -152,7 +152,7 @@ def scrape_ewg():
 
 # === Action Buttons ===
 st.markdown("---")
-top_cols = st.columns([0.85, 0.15])
+top_cols = st.columns([0.9, 0.1])
 with top_cols[1]:
     if st.button(f"📁 Saved ({len(st.session_state.saved_articles)})"):
         st.session_state.view_mode = "saved"
@@ -173,7 +173,7 @@ if st.button("🔎 Search Now"):
 # === Main Card Renderer ===
 def render_article(article, idx):
     is_saved = any(saved["link"] == article["link"] for saved in st.session_state.saved_articles)
-    card_width = 500
+    card_width = 1000
     card_height = int(card_width / 1.618)
     image_width = int(card_width * 0.382)
 
