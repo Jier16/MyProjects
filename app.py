@@ -125,7 +125,7 @@ def scrape_cfs():
 # Streamlit UI
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 30px;'>🔍 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
-st.markdown("<h2 style='font-size: 18px;'>📣 Notice: this website will only give you articles published in the past two weeks.</h2>", unsafe_allow_html=True)
+st.markdown("<p style='font-size: 18px;'>📣 Notice: this website will only give you articles published in the past two weeks.</p>", unsafe_allow_html=True)
 st.markdown("<p style='font-size: 18px;'>Select the sources you want to search:</p>", unsafe_allow_html=True)
 
 # User selections
