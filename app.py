@@ -203,8 +203,16 @@ if st.session_state.view_mode == "main":
             row_articles = st.session_state.all_articles[i:i+3]
             row = st.columns(3)
             for idx, article in enumerate(row_articles):
+                article_key = f"article_{i+idx}"
                 is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
+                icon_key = f"save_{article_key}"
                 with row[idx]:
+                    if st.button("★" if is_saved else "☆", key=icon_key):
+                        if is_saved:
+                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
+                        else:
+                            st.session_state.saved_articles.append(article)
+
                     st.markdown("""
                         <div style='background-color:#f9f9f9;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow: hidden;'>
                             {img}
@@ -214,11 +222,6 @@ if st.session_state.view_mode == "main":
                                 <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {date}</p>
                                 <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {source}</p>
                             </div>
-                            <div style='text-align:right;padding:10px;'>
-                                <form action='' method='post'>
-                                    <button style='background:none;border:none;font-size:18px;color:#1a73e8;' name='star_button_{idx}' type='submit'>{icon}</button>
-                                </form>
-                            </div>
                         </div>
                     """.format(
                         img=f"<img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>" if article.get("image") else "",
@@ -226,17 +229,8 @@ if st.session_state.view_mode == "main":
                         topic=article['topic'],
                         date=article['date'],
                         source=article['source'],
-                        link=article['link'],
-                        icon="★" if is_saved else "☆",
-                        idx=i+idx
+                        link=article['link']
                     ), unsafe_allow_html=True)
-
-                    # Logic for saving/un-saving handled separately due to button context
-                    if st.session_state.get(f"star_button_{i+idx}"):
-                        if is_saved:
-                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
-                        else:
-                            st.session_state.saved_articles.append(article)
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
@@ -274,3 +268,4 @@ elif st.session_state.view_mode == "saved":
                     ), unsafe_allow_html=True)
     else:
         st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
+
