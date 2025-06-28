@@ -166,6 +166,8 @@ def scrape_ewg():
     return articles_data
 
 # === UI ===
+import streamlit as st
+
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 36px;'>🌍 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
 
@@ -214,16 +216,13 @@ if st.session_state.view_mode == "main":
                                 <p style='font-size:14px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
                                 <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
                                 <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
-                                <form action='#' method='post'>
-                                    <button type='submit' name='star' value='{key}' style='position:absolute; bottom:10px; right:15px; background:none; border:none; font-size:18px; cursor:pointer;'>
-                                        {'★' if is_saved else '☆'}
-                                    </button>
-                                </form>
+                                <div style='position:absolute; bottom:10px; right:15px;'>
+                                    <button type='button' style='background:none; border:none; font-size:18px; cursor:pointer;'>{'★' if is_saved else '☆'}</button>
+                                </div>
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
 
-                    # Proper Streamlit button for interaction
                     if st.button("Toggle Save", key=key):
                         if is_saved:
                             st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
@@ -262,3 +261,4 @@ elif st.session_state.view_mode == "saved":
                     """, unsafe_allow_html=True)
     else:
         st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
+
