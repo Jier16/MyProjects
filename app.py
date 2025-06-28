@@ -206,12 +206,6 @@ if st.session_state.view_mode == "main":
                 is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
                 key = f"save_button_{i+idx}"
                 with row[idx]:
-                    if st.button("★" if is_saved else "☆", key=key):
-                        if is_saved:
-                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
-                        else:
-                            st.session_state.saved_articles.append(article)
-
                     st.markdown(f"""
                         <div style='background-color:#f9f9f9;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow:hidden; height:400px; position:relative;'>
                             <img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>
@@ -221,11 +215,21 @@ if st.session_state.view_mode == "main":
                                 <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
                                 <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
                             </div>
-                            <div style='position:absolute; bottom:10px; right:15px;'>
-                                <span style='font-size:18px;'>{'★' if is_saved else '☆'}</span>
-                            </div>
+                            <form action='' method='POST'>
+                                <button name='save_{key}' type='submit' style='background:none;border:none;position:absolute;bottom:10px;right:15px;font-size:18px;cursor:pointer;'>
+                                    {'★' if is_saved else '☆'}
+                                </button>
+                            </form>
                         </div>
                     """, unsafe_allow_html=True)
+
+                    # Handle star click with workaround
+                    if f'save_{key}' in st.session_state:
+                        if is_saved:
+                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
+                        else:
+                            st.session_state.saved_articles.append(article)
+
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
@@ -259,3 +263,4 @@ elif st.session_state.view_mode == "saved":
                     """, unsafe_allow_html=True)
     else:
         st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
+
