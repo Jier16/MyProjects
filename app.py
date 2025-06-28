@@ -148,30 +148,32 @@ if st.session_state.view_mode == "main":
             st.session_state.all_articles += scrape_cfs()
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
 
-    if st.session_state.all_articles:
-        for idx, article in enumerate(st.session_state.all_articles):
-            is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
-            with st.container():
-                col1, col2 = st.columns([0.95, 0.05])
-                with col1:
-                    st.markdown(f"""
-                        <div style='background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
-                            <h3 style='font-size:22px;margin-bottom:10px;'>
-                                <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
-                            </h3>
-                            <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {article['topic']}</p>
-                            <p style='font-size:16px;margin:0;'><strong>Date:</strong> {article['date']}</p>
-                            <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
-                        </div>
-                    """, unsafe_allow_html=True)
-                with col2:
-                    key = f"star_{idx}"
-                    icon = st.image("star.png", width=10) if is_saved else st.image("unstar.png", width=10)
-                    if st.button(icon, key=key):
-                        if is_saved:
-                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
-                        else:
-                            st.session_state.saved_articles.append(article)
+if st.session_state.all_articles:
+    for idx, article in enumerate(st.session_state.all_articles):
+        is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
+        with st.container():
+            col1, col2 = st.columns([0.95, 0.05])
+            with col1:
+                st.markdown(f"""
+                    <div style='background-color:#f9f9f9;padding:20px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
+                        <h3 style='font-size:22px;margin-bottom:10px;'>
+                            <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
+                        </h3>
+                        <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {article['topic']}</p>
+                        <p style='font-size:16px;margin:0;'><strong>Date:</strong> {article['date']}</p>
+                        <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
+                    </div>
+                """, unsafe_allow_html=True)
+            with col2:
+                icon_path = "star.png" if is_saved else "unstar.png"
+                st.image(icon_path, width=24)
+                key = f"toggle_save_{idx}"
+                button_label = "Unsave" if is_saved else "Save"
+                if st.button(button_label, key=key):
+                    if is_saved:
+                        st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
+                    else:
+                        st.session_state.saved_articles.append(article)
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
