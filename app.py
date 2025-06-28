@@ -164,15 +164,23 @@ if st.session_state.view_mode == "main":
                             <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
                         </div>
                     """, unsafe_allow_html=True)
-                with col2:
-                    key = f"star_{idx}"
-                    icon = "★" if is_saved else "☆"
-                    size = "30px"
-                    if st.button(icon, key=key):
-                        if is_saved:
-                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
-                        else:
-                            st.session_state.saved_articles.append(article)
+               with col2:
+                   star = "★" if is_saved else "☆"
+                   size = "30px"  # Adjust the size here
+                   form_key = f"form_{idx}"
+
+                   with st.form(form_key):
+                       st.markdown(f"""
+                           <button style="background:none;border:none;padding:0;cursor:pointer;font-size:{size};line-height:1;" type="submit">
+                               {star}
+                            </button>
+                        """, unsafe_allow_html=True)
+                       
+                        if st.button(icon, key=key):
+                            if is_saved:
+                                st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
+                            else:
+                                st.session_state.saved_articles.append(article)
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
