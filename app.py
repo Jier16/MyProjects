@@ -241,7 +241,7 @@ elif st.session_state.view_mode == "saved":
             for idx, article in enumerate(row_articles):
                 with row[idx]:
                     st.markdown(f"""
-                        <div style='background-color:#f0fff0;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow: hidden; height:400px;'>
+                        <div style='background-color:#f0fff0;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow: hidden; height:450px;'>
                             <img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>
                             <div style='padding: 15px;'>
                                 <h4 style='font-size:18px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
