@@ -25,7 +25,7 @@ st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("""
 <h1 style='font-size: 36px;'>
     <img src='https://twemoji.maxcdn.com/v/latest/svg/1f4c5.svg' width='36' style='vertical-align: middle;'/>
-    Latest Articles from Selected Websites
+    🔎 Latest Articles from Selected Websites
 </h1>
 """, unsafe_allow_html=True)
 
