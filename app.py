@@ -126,17 +126,16 @@ def scrape_cfs():
     return articles_data
 
 def scrape_ewg():
-    URL = "https://www.ewg.org/news-insights"
+    URL = "https://www.ewg.org/news-insights/news-release"
     headers = {'User-Agent': 'Mozilla/5.0'}
     page = requests.get(URL, headers=headers)
     articles_data = []
 
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
-        articles = soup.find_all('div', class_='field content-group')
+        articles = soup.find_all('div', class_='wrapper')
 
         for a in articles:
-            title_element = a.find("h3")
             date_element = a.find("time")
 
             all_links = a.find_all("a")
@@ -144,8 +143,11 @@ def scrape_ewg():
             topics = [link.text.strip() for link in topic_links]
             topic_text = ", ".join(topics) if topics else "Topic not found"
 
-            link_element = next((link for link in all_links if "/news-release/" in link.get("href", "")), None)
-            img_element = a.find("a", class_ = "linked-image" )
+            for link in all_links:
+                if "/news-release/" in link.get("href", "")), None): link_element = link
+                title_element = link
+                
+            img_element = a.find("img", loading = "crazy" )
             image_url = "https://www.ewg.org/" + img_element['src'] if img_element else None
 
             if date_element:
