@@ -121,6 +121,47 @@ def scrape_cfs():
                     })
     return articles_data
 
+def scrape_ewg():
+    URL = "https://www.ewg.org/news-insights"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    page = requests.get(URL, headers=headers)
+    articles_data = []
+
+    if page.status_code != 403:
+        soup = BeautifulSoup(page.content, "html.parser")
+        articles = soup.find_all('div', class_='field content-group')
+        two_weeks_ago = datetime.now() - timedelta(weeks=2)
+
+        for a in articles:
+            title_element = a.find("h3")
+            date_element = a.find("time")
+            link_element = a.find("a")
+            
+            # Extract all <a> tags and filter out the article title
+            all_links = a.find_all("a")
+            topic_links = [link for link in all_links if "/areas-focus/" in link.get("href", "")]
+            topics = [link.text.strip() for link in topic_links]
+            topic_text = ", ".join(topics) if topics else "Topic not found"
+        
+            if date_element:
+                try:
+                    article_date = datetime.strptime(date_element.text, "%B %d, %Y")
+                except:
+                    continue
+                if article_date >= two_weeks_ago:
+                    formatted_date = article_date.strftime("%b %d, %Y")
+                    articles_data.append({
+                        "title": title_element.text.strip() if title_element else "Title not found",
+                        "topic": topic_text,
+                        "date": formatted_date,
+                        "date_obj": article_date,
+                        "link": "https://www.ewg.org/news-insights" + link_element['href'] if link_element else "Link not found",
+                        "source": "Environmental Working Group"
+                    })
+    return articles_data
+
 # Streamlit UI
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 36px;'>📅 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
