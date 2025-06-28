@@ -174,7 +174,7 @@ if st.button("🔎 Search Now"):
 def render_article(article, idx):
     is_saved = any(saved["link"] == article["link"] for saved in st.session_state.saved_articles)
     card_width = 1200
-    card_height = 500
+    card_height = 300
     image_width = 500
 
     st.markdown(f"""
