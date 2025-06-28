@@ -28,6 +28,7 @@ st.markdown("""
     🔎 Latest Articles from Selected Websites
 </h1>
 """, unsafe_allow_html=True)
+
 # Top-right folder icon
 with st.container():
     cols = st.columns([0.9, 0.1])
@@ -76,8 +77,8 @@ if st.session_state.view_mode == "main":
                                 <p style='font-size:14px;margin:5px 0 0;'><strong>Date:</strong> {article['date']}</p>
                                 <p style='font-size:14px;margin:5px 0 0;'><strong>Source:</strong> {article['source']}</p>
                             </div>
-                            <div style='flex:1;text-align:right;'>
-                                {"<img src='" + article['image'] + "' style='max-height:180px; max-width:100%; border-radius:10px;'/>" if article.get("image") else ""}
+                            <div style='flex:1;text-align:center;'>
+                                {"<img src='" + article['image'] + "' style='max-height:200px; max-width:100%; border-radius:10px;'/>" if article.get("image") else ""}
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
