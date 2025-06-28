@@ -217,8 +217,7 @@ if st.session_state.view_mode == "main":
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    
-                    st.markdown("<div style='display:flex; justify-content: flex-end;'>", unsafe_allow_html=True)
+                    st.markdown("<div style='display:flex; justify-content: flex-end;'<", unsafe_allow_html=True)
                     if st.button("★" if is_saved else "☆", key=key):
                         if is_saved:
                             st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
