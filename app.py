@@ -173,13 +173,10 @@ with st.container():
 
 if st.session_state.view_mode == "main":
     st.markdown("<p style='font-size: 18px;'>Select the sources you want to search:</p>", unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        show_cspi = st.checkbox("Center for Science in the Public Interest")
-        show_mighty = st.checkbox("Mighty Earth")
-    with col2:
-        show_cfs = st.checkbox("Center for Food Safety")
-        show_ewg = st.checkbox("Environmental Working Group")
+    show_cspi = st.checkbox("Center for Science in the Public Interest")
+    show_mighty = st.checkbox("Mighty Earth")
+    show_cfs = st.checkbox("Center for Food Safety")
+    show_ewg = st.checkbox("Environmental Working Group")
 
     if st.button("Search"):
         st.session_state.all_articles = []
