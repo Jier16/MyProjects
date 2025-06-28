@@ -157,7 +157,7 @@ def scrape_ewg():
                         "topic": topic_text,
                         "date": formatted_date,
                         "date_obj": article_date,
-                        "link": "https://www.ewg.org/news-insights" + link_element["href"] if link_element else "Link not found",
+                        "link": "https://www.ewg.org" + link_element["href"] if link_element else "Link not found",
                         "source": "Environmental Working Group"
                     })
     return articles_data
