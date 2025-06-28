@@ -12,8 +12,6 @@ if "view_mode" not in st.session_state:
     st.session_state.view_mode = "main"
 if "all_articles" not in st.session_state:
     st.session_state.all_articles = []
-if st.button("🔄 Reset to Main View"):
-    st.session_state.view_mode = "main"
 
 # Helper functions for each website
 def scrape_cspi():
@@ -140,13 +138,11 @@ def scrape_ewg():
             title_element = a.find("h3")
             date_element = a.find("time")
             link_element = a.find("a")
-            
-            # Extract all <a> tags and filter out the article title
             all_links = a.find_all("a")
             topic_links = [link for link in all_links if "/areas-focus/" in link.get("href", "")]
             topics = [link.text.strip() for link in topic_links]
             topic_text = ", ".join(topics) if topics else "Topic not found"
-        
+
             if date_element:
                 try:
                     article_date = datetime.strptime(date_element.text, "%B %d, %Y")
@@ -159,7 +155,7 @@ def scrape_ewg():
                         "topic": topic_text,
                         "date": formatted_date,
                         "date_obj": article_date,
-                        "link": "https://www.ewg.org/news-insights" + link_element['href'] if link_element else "Link not found",
+                        "link": "https://www.ewg.org" + link_element['href'] if link_element else "Link not found",
                         "source": "Environmental Working Group"
                     })
     return articles_data
@@ -177,10 +173,13 @@ with st.container():
 
 if st.session_state.view_mode == "main":
     st.markdown("<p style='font-size: 18px;'>Select the sources you want to search:</p>", unsafe_allow_html=True)
-    show_cspi = st.checkbox("Center for Science in the Public Interest")
-    show_mighty = st.checkbox("Mighty Earth")
-    show_cfs = st.checkbox("Center for Food Safety")
-    show_ewg = st.checkbox("Environmental Working Group")
+    col1, col2 = st.columns(2)
+    with col1:
+        show_cspi = st.checkbox("Center for Science in the Public Interest")
+        show_mighty = st.checkbox("Mighty Earth")
+    with col2:
+        show_cfs = st.checkbox("Center for Food Safety")
+        show_ewg = st.checkbox("Environmental Working Group")
 
     if st.button("Search"):
         st.session_state.all_articles = []
