@@ -167,27 +167,24 @@ def scrape_ewg():
 
 # === UI ===
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
-st.markdown("<h1 style='font-size: 36px;'>\ud83d\uddd3\ufe0f Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='font-size: 36px;'>🌍 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
 
 # Top-right folder icon
 with st.container():
     cols = st.columns([0.9, 0.1])
     with cols[1]:
-        if st.button("\ud83d\udcc1 Saved ({})".format(len(st.session_state.saved_articles))):
+        if st.button("📁 Saved ({})".format(len(st.session_state.saved_articles))):
             st.session_state.view_mode = "saved"
 
 # Main view
 if st.session_state.view_mode == "main":
-    st.markdown(
-        f"<p style='font-size:16px;'>Showing articles published between <strong>{DATE_RANGE_START.strftime('%b %d, %Y')}</strong> and <strong>{DATE_RANGE_END.strftime('%b %d, %Y')}</strong>.</p>",
-        unsafe_allow_html=True
-    )
+    st.markdown(f"<p style='font-size:16px;'>Showing articles published between <strong>{DATE_RANGE_START.strftime('%b %d, %Y')}</strong> and <strong>{DATE_RANGE_END.strftime('%b %d, %Y')}</strong>.</p>", unsafe_allow_html=True)
     st.markdown("### Website Selection")
-    select_all = st.checkbox("\ud83d\udd23 Select All Websites")
-    show_cspi = st.checkbox("1\ufe0f\u20e3 Center for Science in the Public Interest", value=select_all)
-    show_mighty = st.checkbox("2\ufe0f\u20e3 Mighty Earth", value=select_all)
-    show_cfs = st.checkbox("3\ufe0f\u20e3 Center for Food Safety", value=select_all)
-    show_ewg = st.checkbox("4\ufe0f\u20e3 Environmental Working Group", value=select_all)
+    select_all = st.checkbox("🔢 Select All Websites")
+    show_cspi = st.checkbox("1️⃣ Center for Science in the Public Interest", value=select_all)
+    show_mighty = st.checkbox("2️⃣ Mighty Earth", value=select_all)
+    show_cfs = st.checkbox("3️⃣ Center for Food Safety", value=select_all)
+    show_ewg = st.checkbox("4️⃣ Environmental Working Group", value=select_all)
 
     if st.button("Search"):
         st.session_state.all_articles = []
@@ -202,34 +199,40 @@ if st.session_state.view_mode == "main":
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
 
     if st.session_state.all_articles:
-        for idx, article in enumerate(st.session_state.all_articles):
-            is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
-            with st.container():
-                col1, col2 = st.columns([0.9, 0.1])
-                with col1:
-                    text_col, image_col = st.columns([2, 1])
-                    with text_col:
-                        st.markdown(f"""
-                            <div style='background-color:#f9f9f9;padding:20px;height:200px;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
-                                <h3 style='font-size:22px;margin-bottom:10px;'>
-                                    <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
-                                </h3>
-                                <p style='font-size:16px;margin:0;'><strong>Topic:</strong> {article['topic']}</p>
-                                <p style='font-size:16px;margin:0;'><strong>Date:</strong> {article['date']}</p>
-                                <p style='font-size:16px;margin:0;'><strong>Source:</strong> {article['source']}</p>
+        for i in range(0, len(st.session_state.all_articles), 3):
+            row_articles = st.session_state.all_articles[i:i+3]
+            row = st.columns(3)
+            for idx, article in enumerate(row_articles):
+                is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
+                with row[idx]:
+                    st.markdown("""
+                        <div style='background-color:#f9f9f9;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow: hidden;'>
+                            {img}
+                            <div style='padding: 15px;'>
+                                <h4 style='font-size:18px;margin:0 0 10px;'><a href='{link}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{title}</a></h4>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Topic:</strong> {topic}</p>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {date}</p>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {source}</p>
                             </div>
-                        """, unsafe_allow_html=True)
-                    with image_col:
-                        if article.get("image"):
-                            st.markdown(f"""
-                                <div style='height:200px;display:flex;align-items:center;justify-content:center;'>
-                                    <img src="{article['image']}" style="max-width:100%; max-height:180px; border-radius:10px;" />
-                                </div>
-                            """, unsafe_allow_html=True)
-                with col2:
-                    key = f"star_{idx}"
-                    icon = "\u2605" if is_saved else "\u2606"
-                    if st.button(icon, key=key):
+                            <div style='text-align:right;padding:10px;'>
+                                <form action='' method='post'>
+                                    <button style='background:none;border:none;font-size:18px;color:#1a73e8;' name='star_button_{idx}' type='submit'>{icon}</button>
+                                </form>
+                            </div>
+                        </div>
+                    """.format(
+                        img=f"<img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>" if article.get("image") else "",
+                        title=article['title'],
+                        topic=article['topic'],
+                        date=article['date'],
+                        source=article['source'],
+                        link=article['link'],
+                        icon="★" if is_saved else "☆",
+                        idx=i+idx
+                    ), unsafe_allow_html=True)
+
+                    # Logic for saving/un-saving handled separately due to button context
+                    if st.session_state.get(f"star_button_{i+idx}"):
                         if is_saved:
                             st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
                         else:
@@ -239,33 +242,35 @@ if st.session_state.view_mode == "main":
 
 # Saved view
 elif st.session_state.view_mode == "saved":
-    st.markdown("<h2>\ud83d\udcc1 Saved Articles</h2>", unsafe_allow_html=True)
+    st.markdown("<h2>📁 Saved Articles</h2>", unsafe_allow_html=True)
     col1, col2 = st.columns([0.7, 0.3])
     with col1:
-        if st.button("\u2b05\ufe0f Back to All Articles"):
+        if st.button("⬅️ Back to All Articles"):
             st.session_state.view_mode = "main"
 
     if st.session_state.saved_articles:
-        for article in st.session_state.saved_articles:
-            with st.container():
-                text_col, image_col = st.columns([2, 1])
-                with text_col:
-                    st.markdown(f"""
-                        <div style='background-color:#f0fff0;padding:20px;height:200px;overflow:hidden;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05);'>
-                            <h3 style='font-size:20px;margin-bottom:10px;'>
-                                <a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a>
-                            </h3>
-                            <p style='font-size:15px;margin:5px 0;'><strong>Topic:</strong> {article['topic']}</p>
-                            <p style='font-size:15px;margin:5px 0;'><strong>Date:</strong> {article['date']}</p>
-                            <p style='font-size:15px;margin:5px 0;'><strong>Source:</strong> {article['source']}</p>
-                        </div>
-                    """, unsafe_allow_html=True)
-                with image_col:
-                    if article.get("image"):
-                        st.markdown(f"""
-                            <div style='height:200px;display:flex;align-items:center;justify-content:center;'>
-                                <img src="{article['image']}" style="max-width:100%; max-height:180px; border-radius:10px;" />
+        for i in range(0, len(st.session_state.saved_articles), 3):
+            row_articles = st.session_state.saved_articles[i:i+3]
+            row = st.columns(3)
+            for idx, article in enumerate(row_articles):
+                with row[idx]:
+                    st.markdown("""
+                        <div style='background-color:#f0fff0;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow: hidden;'>
+                            {img}
+                            <div style='padding: 15px;'>
+                                <h4 style='font-size:18px;margin:0 0 10px;'><a href='{link}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{title}</a></h4>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Topic:</strong> {topic}</p>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Date:</strong> {date}</p>
+                                <p style='font-size:14px;margin:4px 0;'><strong>Source:</strong> {source}</p>
                             </div>
-                        """, unsafe_allow_html=True)
+                        </div>
+                    """.format(
+                        img=f"<img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>" if article.get("image") else "",
+                        title=article['title'],
+                        topic=article['topic'],
+                        date=article['date'],
+                        source=article['source'],
+                        link=article['link']
+                    ), unsafe_allow_html=True)
     else:
-        st.info("You haven’t saved any articles yet. \u2b50 them from the main view!")
+        st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
