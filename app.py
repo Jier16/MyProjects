@@ -205,7 +205,7 @@ if st.session_state.view_mode == "main":
         for idx, article in enumerate(st.session_state.all_articles):
             is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
             with st.container():
-                col1, col2 = st.columns([0.95, 0.05])
+                col1, col2 = st.columns([0.9, 0.1])
                 with col1:
                     text_col, image_col = st.columns([2, 1])
                     with text_col:
