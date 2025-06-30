@@ -238,37 +238,44 @@ if st.session_state.view_mode == "main":
             st.session_state.all_articles += scrape_phw()
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
 
-    if st.session_state.all_articles:
-        for i in range(0, len(st.session_state.all_articles), 3):
-            row_articles = st.session_state.all_articles[i:i+3]
-            row = st.columns(3)
-            for idx, article in enumerate(row_articles):
-                is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
-                key = f"star_{i+idx}"
-                with row[idx]:
-                    st.markdown(f"""
-                        <div style='background-color:#f9f9f9;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow:hidden; height:500px; position: relative;'>
-                            <div style='display:flex; justify-content: flex-end; padding: 10px;'>
-                                <form action='#' method='post'>
-                                    <button type='submit' name='{key}' style='border: none; background: none; font-size: 24px; cursor: pointer;'>{'★' if is_saved else '☆'}</button>
-                                </form>
-                            </div>
-                            <img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>
-                            <div style='padding: 15px;'>
-                                <h4 style='font-size:22px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
-                            </div>
+if st.session_state.all_articles:
+    for i in range(0, len(st.session_state.all_articles), 3):
+        row_articles = st.session_state.all_articles[i:i+3]
+        row = st.columns(3)
+        for idx, article in enumerate(row_articles):
+            is_saved = any(saved['link'] == article['link'] for saved in st.session_state.saved_articles)
+            key = f"star_{i+idx}"
+            with row[idx]:
+                # Container div with top-right star and full article card
+                st.markdown(f"""
+                    <div style='position: relative; background-color:#f9f9f9; border-radius:10px; margin-bottom:20px; box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow:hidden; height:500px;'>
+                        <div style='position: absolute; top: 10px; right: 10px; z-index: 2;'>
+                            <style>
+                                button[data-testid="{key}"] {{
+                                    border: none !important;
+                                    background: none !important;
+                                    color: {'#FFD700' if is_saved else '#aaa'} !important;
+                                    font-size: 26px !important;
+                                    padding: 0 !important;
+                                }}
+                            </style>
                         </div>
-                    """, unsafe_allow_html=True)
+                        <img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>
+                        <div style='padding: 15px;'>
+                            <h4 style='font-size:22px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
+                            <p style='font-size:16px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
+                            <p style='font-size:16px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
+                            <p style='font-size:16px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
 
-                    # Actual streamlit button (for star state)
-                    if st.button(" ", key=key):
-                        if is_saved:
-                            st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
-                        else:
-                            st.session_state.saved_articles.append(article)               
+                # Add invisible star button over top-right
+                if st.button("★" if is_saved else "☆", key=key):
+                    if is_saved:
+                        st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
+                    else:
+                        st.session_state.saved_articles.append(article)         
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
