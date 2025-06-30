@@ -222,7 +222,7 @@ if st.session_state.view_mode == "main":
     show_mighty = st.checkbox("2️⃣ Mighty Earth", value=select_all)
     show_cfs = st.checkbox("3️⃣ Center for Food Safety", value=select_all)
     show_ewg = st.checkbox("4️⃣ Environmental Working Group", value=select_all)
-    show_phw = st.checkbox(" Public Health Watch", value=select_all)
+    show_phw = st.checkbox("5️⃣ Public Health Watch", value=select_all)
 
     if st.button("Search"):
         st.session_state.all_articles = []
