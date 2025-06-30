@@ -165,6 +165,43 @@ def scrape_ewg():
                     })
     return articles_data
 
+
+def scrape_phw():
+    URL = "https://publichealthwatch.org/"
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    page = requests.get(URL, headers=headers)
+    articles_data = []
+
+    if page.status_code != 403:
+        soup = BeautifulSoup(page.content, "html.parser")
+        articles = soup.find_all("article", class_ = "category-accesstocare category-uninsured-in-america type-post post-has-image")
+
+        for a in articles:
+            if a.find("h3", class_ = "entry-title"): title_element = a.find("h3", class_ = "entry-title").find("a")
+            date_element = a.find("time", class_ = "entry-date published")
+            link_element = title_element
+            img_element = a.find("img")
+            image_url = img_element['src'] if img_element else None
+
+            if date_element:
+                try:
+                    clean_date = re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_element.text)
+                    article_date = datetime.strptime(clean_date, "%B %d, %Y")
+                except:
+                    continue
+                if article_date >= DATE_RANGE_START:
+                    formatted_date = article_date.strftime("%b %d, %Y")
+                    articles_data.append({
+                        "title": title_element.text.strip() if title_element else "Title not found",
+                        "topic": "Topic not found",
+                        "date": formatted_date,
+                        "date_obj": article_date,
+                        "link": "https://www.centerforfoodsafety.org" + link_element['href'] if link_element else "Link not found",
+                        "source": "Center for Food Safety",
+                        "image": image_url
+                    })
+    return articles_data
+
 # === UI ===
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 36px;'>🌍 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
@@ -185,6 +222,7 @@ if st.session_state.view_mode == "main":
     show_mighty = st.checkbox("2️⃣ Mighty Earth", value=select_all)
     show_cfs = st.checkbox("3️⃣ Center for Food Safety", value=select_all)
     show_ewg = st.checkbox("4️⃣ Environmental Working Group", value=select_all)
+    show_phw = st.checkbox(" Public Health Watch", value=select_all)
 
     if st.button("Search"):
         st.session_state.all_articles = []
@@ -196,6 +234,8 @@ if st.session_state.view_mode == "main":
             st.session_state.all_articles += scrape_cfs()
         if show_ewg:
             st.session_state.all_articles += scrape_ewg()
+        if show_phw:
+            st.session_state.all_articles += scrape_phw()
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
 
     if st.session_state.all_articles:
