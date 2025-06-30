@@ -247,7 +247,12 @@ if st.session_state.view_mode == "main":
                 key = f"star_{i+idx}"
                 with row[idx]:
                     st.markdown(f"""
-                        <div style='background-color:#f9f9f9;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow:hidden; height:500px;'>
+                        <div style='background-color:#f9f9f9;padding:0;border-radius:10px;margin-bottom:20px;box-shadow:0 4px 8px rgba(0, 0, 0, 0.05); overflow:hidden; height:500px; position: relative;'>
+                            <div style='display:flex; justify-content: flex-end; padding: 10px;'>
+                                <form action='#' method='post'>
+                                    <button type='submit' name='{key}' style='border: none; background: none; font-size: 24px; cursor: pointer;'>{'★' if is_saved else '☆'}</button>
+                                </form>
+                            </div>
                             <img src='{article['image']}' style='width:100%;height:200px;object-fit:cover;'>
                             <div style='padding: 15px;'>
                                 <h4 style='font-size:22px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
@@ -257,14 +262,13 @@ if st.session_state.view_mode == "main":
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.markdown("<div style='display:flex; justify-content: flex-end;'<", unsafe_allow_html=True)
-                    if st.button("★" if is_saved else "☆", key=key):
+
+                    # Actual streamlit button (for star state)
+                    if st.button(" ", key=key):
                         if is_saved:
                             st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
                         else:
-                            st.session_state.saved_articles.append(article)
-
-                    
+                            st.session_state.saved_articles.append(article)               
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
