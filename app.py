@@ -174,10 +174,11 @@ def scrape_phw():
 
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
-        articles = soup.find_all("article", class_ = "category-accesstocare category-uninsured-in-america type-post post-has-image")
+        rticles = soup.find_all("article", attrs={"data-post-id": True})
 
         for a in articles:
-            if a.find("h3", class_ = "entry-title"): title_element = a.find("h3", class_ = "entry-title").find("a")
+            if a.find("h3", class_ = "entry-title"): 
+            title_element = a.find(class_ = "entry-title").find("a")
             date_element = a.find("time", class_ = "entry-date published")
             link_element = title_element
             img_element = a.find("img")
