@@ -177,7 +177,6 @@ def scrape_phw():
         articles = soup.find_all("article", attrs={"data-post-id": True})
 
         for a in articles:
-            if a.find("h3", class_ = "entry-title"): 
             title_element = a.find(class_ = "entry-title").find("a")
             date_element = a.find("time", class_ = "entry-date published")
             link_element = title_element
