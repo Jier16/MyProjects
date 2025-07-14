@@ -196,8 +196,8 @@ def scrape_phw():
                         "topic": "Topic not found",
                         "date": formatted_date,
                         "date_obj": article_date,
-                        "link": "https://www.centerforfoodsafety.org" + link_element['href'] if link_element else "Link not found",
-                        "source": "Center for Food Safety",
+                        "link": link_element['href'] if link_element else "Link not found",
+                        "source": "Public Health Watch",
                         "image": image_url
                     })
     return articles_data
