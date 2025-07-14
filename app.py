@@ -174,7 +174,7 @@ def scrape_phw():
 
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
-        rticles = soup.find_all("article", attrs={"data-post-id": True})
+        articles = soup.find_all("article", attrs={"data-post-id": True})
 
         for a in articles:
             if a.find("h3", class_ = "entry-title"): 
