@@ -221,7 +221,7 @@ def scrape_tff():
 
             if date_element:
                 try:
-                    article_date = datetime.strptime(clean_date, "%B %d, %Y")
+                    article_date = datetime.strptime(date_element, "%B %d, %Y")
                 except:
                     continue
                 if article_date >= DATE_RANGE_START:
