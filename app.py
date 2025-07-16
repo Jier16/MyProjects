@@ -202,6 +202,41 @@ def scrape_phw():
                     })
     return articles_data
 
+def scrape_tff():
+    URL = "https://toxicfreefuture.org/press-room/"
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    page = requests.get(URL, headers=headers)
+    articles_data = []
+
+    if page.status_code != 403:
+        soup = BeautifulSoup(page.content, "html.parser")
+        articles = soup.find_all(class_ = "headline   headline--compact")
+
+        for a in articles:
+            title_element = a.find(class_ = "h4-text")
+            date_element = a.find("div", class_ = "post-meta")
+            link_element = title_element
+            img_element = a.find("img")
+            image_url = img_element['src'] if img_element else None
+
+            if date_element:
+                try:
+                    article_date = datetime.strptime(clean_date, "%B %d, %Y")
+                except:
+                    continue
+                if article_date >= DATE_RANGE_START:
+                    formatted_date = article_date.strftime("%b %d, %Y")
+                    articles_data.append({
+                        "title": title_element.text.strip() if title_element else "Title not found",
+                        "topic": "Topic not found",
+                        "date": formatted_date,
+                        "date_obj": article_date,
+                        "link": link_element['href'] if link_element else "Link not found",
+                        "source": "Toxic-free Future",
+                        "image": image_url
+                    })
+    return articles_data
+
 # === UI ===
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
 st.markdown("<h1 style='font-size: 36px;'>🌍 Latest Articles from Selected Websites</h1>", unsafe_allow_html=True)
@@ -223,6 +258,8 @@ if st.session_state.view_mode == "main":
     show_cfs = st.checkbox("3️⃣ Center for Food Safety", value=select_all)
     show_ewg = st.checkbox("4️⃣ Environmental Working Group", value=select_all)
     show_phw = st.checkbox("5️⃣ Public Health Watch", value=select_all)
+    show_tff = st.checkbox("6 Toxic-free Future", value=select_all)
+
 
     if st.button("Search"):
         st.session_state.all_articles = []
@@ -236,6 +273,8 @@ if st.session_state.view_mode == "main":
             st.session_state.all_articles += scrape_ewg()
         if show_phw:
             st.session_state.all_articles += scrape_phw()
+        if show_tff:
+            st.session_state.all_articles += scrape_tff()
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
 
     if st.session_state.all_articles:
