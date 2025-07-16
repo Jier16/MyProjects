@@ -252,6 +252,7 @@ with st.container():
 if st.session_state.view_mode == "main":
     st.markdown(f"<p style='font-size:16px;'>Showing articles published between <strong>{DATE_RANGE_START.strftime('%b %d, %Y')}</strong> and <strong>{DATE_RANGE_END.strftime('%b %d, %Y')}</strong>.</p>", unsafe_allow_html=True)
     st.markdown("### Website Selection")
+    st.write("✅ Entered MAIN view")
     select_all = st.checkbox("🔢 Select All Websites")
     show_cspi = st.checkbox("1️⃣ Center for Science in the Public Interest", value=select_all)
     show_mighty = st.checkbox("2️⃣ Mighty Earth", value=select_all)
