@@ -7,7 +7,7 @@ import re
 
 # === Define global date range ===
 DATE_RANGE_END = datetime.now()
-DATE_RANGE_START = DATE_RANGE_END - timedelta(weeks=2)
+DATE_RANGE_START = DATE_RANGE_END - timedelta(weeks=10)
 
 # Initialize session state
 if "saved_articles" not in st.session_state:
