@@ -165,7 +165,6 @@ def scrape_ewg():
                     })
     return articles_data
 
-
 def scrape_phw():
     URL = "https://publichealthwatch.org/"
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -261,7 +260,6 @@ if st.session_state.view_mode == "main":
     show_phw = st.checkbox("5️⃣ Public Health Watch", value=select_all)
     show_tff = st.checkbox("6️⃣ Toxic-free Future", value=select_all)
 
-
     if st.button("Search"):
         st.session_state.all_articles = []
         if show_cspi:
@@ -297,14 +295,13 @@ if st.session_state.view_mode == "main":
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.markdown("<div style='display:flex; justify-content: flex-end;'<", unsafe_allow_html=True)
+                    st.markdown("<div style='display:flex; justify-content: flex-end;'>", unsafe_allow_html=True)
                     if st.button("★" if is_saved else "☆", key=key):
                         if is_saved:
                             st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
                         else:
                             st.session_state.saved_articles.append(article)
-
-                    
+                    st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
@@ -328,10 +325,3 @@ elif st.session_state.view_mode == "saved":
                             <div style='padding: 15px;'>
                                 <h4 style='font-size:22px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
                                 <p style='font-size:16px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
-                                <p style='font-size:16px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-    else:
-        st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
