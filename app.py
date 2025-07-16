@@ -213,8 +213,8 @@ def scrape_tff():
         articles = soup.find_all(attrs={"data-click-proxy-container": True})
 
         for a in articles:
-            title_element = a.find("a", class_ = "h4-text")
-            date_element = a.find("div", class_ = "post-meta")
+            title_element = a.find(class_ = "h4-text")
+            date_element = a.find(class_ = "post-meta")
             link_element = title_element
             img_element = a.find("img")
             image_url = img_element['src'] if img_element else None
