@@ -165,6 +165,7 @@ def scrape_ewg():
                     })
     return articles_data
 
+
 def scrape_phw():
     URL = "https://publichealthwatch.org/"
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -212,30 +213,29 @@ def scrape_tff():
         articles = soup.find_all(attrs={"data-click-proxy-container": True})
 
         for a in articles:
-            title_element = a.find(class_="h4-text")
-            date_element = a.find("div", class_="post-meta")
-            link_element = title_element.find("a") if title_element else None
+            title_element = a.find(class_ = "h4-text")
+            date_element = a.find(class_ = "post-meta")
+            link_element = title_element
             img_element = a.find("img")
             image_url = img_element['src'] if img_element else None
 
             if date_element:
                 try:
                     article_date = datetime.strptime(date_element, "%B %d, %Y")
-                except Exception as e:
+                except:
                     continue
                 if article_date >= DATE_RANGE_START:
                     formatted_date = article_date.strftime("%b %d, %Y")
                     articles_data.append({
                         "title": title_element.text.strip() if title_element else "Title not found",
                         "topic": "Topic not found",
-                        "date": article_date,
+                        "date": formatted_date,
                         "date_obj": article_date,
                         "link": link_element['href'] if link_element else "Link not found",
                         "source": "Toxic-free Future",
                         "image": image_url
                     })
     return articles_data
-
 
 # === UI ===
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
@@ -252,16 +252,15 @@ with st.container():
 if st.session_state.view_mode == "main":
     st.markdown(f"<p style='font-size:16px;'>Showing articles published between <strong>{DATE_RANGE_START.strftime('%b %d, %Y')}</strong> and <strong>{DATE_RANGE_END.strftime('%b %d, %Y')}</strong>.</p>", unsafe_allow_html=True)
     st.markdown("### Website Selection")
-    st.write("✅ Entered MAIN view")
     select_all = st.checkbox("🔢 Select All Websites")
     show_cspi = st.checkbox("1️⃣ Center for Science in the Public Interest", value=select_all)
     show_mighty = st.checkbox("2️⃣ Mighty Earth", value=select_all)
     show_cfs = st.checkbox("3️⃣ Center for Food Safety", value=select_all)
     show_ewg = st.checkbox("4️⃣ Environmental Working Group", value=select_all)
-    show_phw = st.checkbox("5️⃣ Public Health", value=select_all)
+    show_phw = st.checkbox("5️⃣ Public Health Watch", value=select_all)
     show_tff = st.checkbox("6️⃣ Toxic-free Future", value=select_all)
-    st.write("Checkbox - Toxic-Free Future:", show_tff)
-    
+
+
     if st.button("Search"):
         st.session_state.all_articles = []
         if show_cspi:
@@ -277,7 +276,7 @@ if st.session_state.view_mode == "main":
         if show_tff:
             st.session_state.all_articles += scrape_tff()
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
-        
+
     if st.session_state.all_articles:
         for i in range(0, len(st.session_state.all_articles), 3):
             row_articles = st.session_state.all_articles[i:i+3]
@@ -297,13 +296,14 @@ if st.session_state.view_mode == "main":
                             </div>
                         </div>
                     """, unsafe_allow_html=True)
-                    st.markdown("<div style='display:flex; justify-content: flex-end;'>", unsafe_allow_html=True)
+                    st.markdown("<div style='display:flex; justify-content: flex-end;'<", unsafe_allow_html=True)
                     if st.button("★" if is_saved else "☆", key=key):
                         if is_saved:
                             st.session_state.saved_articles = [a for a in st.session_state.saved_articles if a['link'] != article['link']]
                         else:
                             st.session_state.saved_articles.append(article)
-                    st.markdown("</div>", unsafe_allow_html=True)
+
+                    
     else:
         st.info("Click 'Search' to load articles from the selected sources.")
 
@@ -327,3 +327,10 @@ elif st.session_state.view_mode == "saved":
                             <div style='padding: 15px;'>
                                 <h4 style='font-size:22px;margin:0 0 10px;'><a href='{article['link']}' target='_blank' style='text-decoration:none;color:#1a73e8;'>{article['title']}</a></h4>
                                 <p style='font-size:16px;margin:4px 0;'><strong>Topic:</strong> {article['topic']}</p>
+                                <p style='font-size:16px;margin:4px 0;'><strong>Date:</strong> {article['date']}</p>
+                                <p style='font-size:16px;margin:4px 0;'><strong>Source:</strong> {article['source']}</p>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+    else:
+        st.info("You haven’t saved any articles yet. ⭐ them from the main view!")
