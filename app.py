@@ -209,12 +209,12 @@ def scrape_tff():
 
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
-        articles = soup.find_all(class_ = "headline   headline--compact")
+        articles = soup.find_all(class_="headline   headline--compact")
 
         for a in articles:
-            title_element = a.find(class_ = "h4-text")
-            date_element = a.find("div", class_ = "post-meta")
-            link_element = title_element
+            title_element = a.find(class_="h4-text")
+            date_element = a.find("div", class_="post-meta")
+            link_element = title_element.find("a") if title_element else None
             img_element = a.find("img")
             image_url = img_element['src'] if img_element else None
 
@@ -222,7 +222,7 @@ def scrape_tff():
                 try:
                     clean_date = re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_element.text.strip())
                     article_date = datetime.strptime(clean_date, "%B %d, %Y")
-                except:
+                except Exception as e:
                     continue
                 if article_date >= DATE_RANGE_START:
                     formatted_date = article_date.strftime("%b %d, %Y")
@@ -236,6 +236,7 @@ def scrape_tff():
                         "image": image_url
                     })
     return articles_data
+
 
 # === UI ===
 st.set_page_config(page_title="Environmental News Aggregator", layout="wide")
