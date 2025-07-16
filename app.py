@@ -209,7 +209,7 @@ def scrape_tff():
 
     if page.status_code != 403:
         soup = BeautifulSoup(page.content, "html.parser")
-        articles = soup.find_all(class_="headline   headline--compact")
+        articles = soup.find_all(attrs={"data-click-proxy-container": True})
 
         for a in articles:
             title_element = a.find(class_="h4-text")
