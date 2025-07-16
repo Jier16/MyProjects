@@ -220,8 +220,7 @@ def scrape_tff():
 
             if date_element:
                 try:
-                    clean_date = re.sub(r'(\d+)(st|nd|rd|th)', r'\1', date_element.text.strip())
-                    article_date = datetime.strptime(clean_date, "%B %d, %Y")
+                    article_date = datetime.strptime(date_element, "%B %d, %Y")
                 except Exception as e:
                     continue
                 if article_date >= DATE_RANGE_START:
@@ -229,7 +228,7 @@ def scrape_tff():
                     articles_data.append({
                         "title": title_element.text.strip() if title_element else "Title not found",
                         "topic": "Topic not found",
-                        "date": formatted_date,
+                        "date": article_date,
                         "date_obj": article_date,
                         "link": link_element['href'] if link_element else "Link not found",
                         "source": "Toxic-free Future",
