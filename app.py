@@ -7,7 +7,7 @@ import re
 
 # === Define global date range ===
 DATE_RANGE_END = datetime.now()
-DATE_RANGE_START = DATE_RANGE_END - timedelta(weeks=10)
+DATE_RANGE_START = DATE_RANGE_END - timedelta(weeks=2)
 
 # Initialize session state
 if "saved_articles" not in st.session_state:
@@ -259,6 +259,7 @@ if st.session_state.view_mode == "main":
     show_ewg = st.checkbox("4️⃣ Environmental Working Group", value=select_all)
     show_phw = st.checkbox("5️⃣ Public Health Watch", value=select_all)
     show_tff = st.checkbox("6️⃣ Toxic-free Future", value=select_all)
+    
     if st.button("Search"):
         st.session_state.all_articles = []
         if show_cspi:
@@ -274,7 +275,7 @@ if st.session_state.view_mode == "main":
         if show_tff:
             st.session_state.all_articles += scrape_tff()
         st.session_state.all_articles.sort(key=lambda x: x['date_obj'], reverse=True)
-
+        
     if st.session_state.all_articles:
         for i in range(0, len(st.session_state.all_articles), 3):
             row_articles = st.session_state.all_articles[i:i+3]
